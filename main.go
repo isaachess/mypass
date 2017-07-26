@@ -1,25 +1,27 @@
 package main
 
 import (
-	"flag"
-	"math/rand"
-	"os"
-	"time"
+	"fmt"
+	"log"
 )
 
 func main() {
-	args := os.Args[1:]
-
-	com := &commands{}
-
-	rand.Seed(time.Now().UnixNano())
-
-	switch args[0] {
-	case "gen":
-		com.Generate()
-	case "cp":
-		com.Copy()
-	default:
-		flag.PrintDefaults()
+	master := []byte("sample master passwd")
+	info, err := NewPasswordInfo("gmail")
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	info.AddRequiredChars(&RequiredChars{
+		Chars: "!&@#",
+		Num:   2,
+	})
+
+	err = GenerateSalt(master, info)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pw, err := Generate(master, info)
+	fmt.Println("pw", pw, "err", err)
 }
