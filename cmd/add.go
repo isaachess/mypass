@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"flag"
 	"mypass/data"
 	"mypass/encrypt"
 	"mypass/generate"
@@ -8,7 +9,9 @@ import (
 	"mypass/terminal"
 )
 
-const AddCmd = "add"
+const AddName = "add"
+
+var AddFlags = flag.NewFlagSet(AddName, flag.ExitOnError)
 
 type Add struct {
 	store *store.JSONStore
@@ -18,13 +21,18 @@ func NewAdd(store *store.JSONStore) *Add {
 	return &Add{store: store}
 }
 
-func (a *Add) Run() error {
+func (a *Add) Run(args []string) error {
 	mp, err := terminal.ReadMasterPassword()
 	if err != nil {
 		return err
 	}
 
-	name, err := terminal.ReadLine("Name: ")
+	name, err := terminal.ReadLine("Site Name: ")
+	if err != nil {
+		return err
+	}
+
+	username, err := terminal.ReadLine("Username: ")
 	if err != nil {
 		return err
 	}
@@ -46,6 +54,6 @@ func (a *Add) Run() error {
 		return err
 	}
 
-	pi := data.NewPasswordInfo(hash, salt)
+	pi := data.NewPasswordInfo(username, hash, salt)
 	return a.store.Put(string(name), pi)
 }

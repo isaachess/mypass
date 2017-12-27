@@ -3,7 +3,6 @@ package store
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"mypass/data"
 	"os"
@@ -28,7 +27,6 @@ func NewJSONStore(path string) *JSONStore {
 }
 
 func (s *JSONStore) Connect() error {
-	fmt.Println("opening store at", s.path)
 	f, err := os.Open(s.path)
 	if err != nil {
 		return err
@@ -37,12 +35,10 @@ func (s *JSONStore) Connect() error {
 
 	if err := json.NewDecoder(f).Decode(&s.pwds); err != nil {
 		if err == io.EOF {
-			fmt.Println("getting eof")
 			return nil
 		}
 		return err
 	}
-	fmt.Println("pwds", s.pwds)
 
 	return nil
 }
@@ -61,7 +57,6 @@ func (s *JSONStore) Get(name string) (*data.PasswordInfo, error) {
 
 func (s *JSONStore) Put(name string, val *data.PasswordInfo) error {
 	// Put adds the pwd info to the map and writes json to the file
-	fmt.Println("pwds", s.pwds)
 	s.writePwds(name, val)
 	f, err := os.Create(s.path)
 	if err != nil {

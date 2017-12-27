@@ -3,15 +3,17 @@ package data
 import "time"
 
 type PasswordInfo struct {
-	Salt []byte    `json:"salt"`
-	Hash []byte    `json:"hash"`
-	Date time.Time `json:"date"`
+	Date     time.Time `json:"date"`
+	Hash     []byte    `json:"hash"`
+	Salt     []byte    `json:"salt"`
+	Username []byte    `json:"username"`
 }
 
-func NewPasswordInfo(hash, salt []byte) *PasswordInfo {
+func NewPasswordInfo(username, hash, salt []byte) *PasswordInfo {
 	return &PasswordInfo{
-		Date: time.Now(),
-		Salt: salt,
-		Hash: hash,
+		Date:     time.Now(),
+		Hash:     hash,
+		Salt:     salt,
+		Username: username,
 	}
 }

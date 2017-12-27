@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"mypass/cmd"
@@ -23,12 +22,6 @@ func main() {
 }
 
 func run() error {
-	addCmd := flag.NewFlagSet(cmd.AddCmd, flag.ExitOnError)
-
-	if len(os.Args) < 2 {
-		return errors.New("Please check usage")
-	}
-
 	currentUser, err := user.Current()
 	if err != nil {
 		return err
@@ -44,25 +37,16 @@ func run() error {
 
 	config := LoadConfig(path, defaultPath)
 
-	store := store.NewJSONStore(config.dataFileLocation)
+	store := store.NewJSONStore(config.DataFileLocation)
+	addCmd := cmd.NewCommand(cmd.AddName, cmd.AddFlags, cmd.NewAdd(store), nil)
+	mainCmd := cmd.NewCommand(cmd.MainName, cmd.MainFlags, cmd.NewMain(), []*cmd.Command{addCmd})
 
-	fmt.Println("loaded this config", config)
 	if err := store.Connect(); err != nil {
 		return err
 	}
 	defer store.Close()
 
-	switch os.Args[1] {
-	case cmd.AddCmd:
-		addCmd.Parse(os.Args[2:])
-	default:
-		flag.PrintDefaults()
-		return nil
-	}
-
-	if addCmd.Parsed() {
-		return cmd.NewAdd(store).Run()
-	}
+	mainCmd.Execute(os.Args[1:])
 
 	return nil
 
