@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"mypass/cmd"
+	cfg "mypass/config"
 	"mypass/store"
 	"os"
 	"os/user"
@@ -35,7 +36,7 @@ func run() error {
 		path = filepath.Join(defaultPath, "config.json")
 	}
 
-	config := LoadConfig(path, defaultPath)
+	config := cfg.LoadConfig(path, defaultPath)
 
 	store := store.NewJSONStore(config.DataFileLocation)
 	addCmd := cmd.NewCommand(cmd.AddName, cmd.AddFlags, cmd.NewAdd(store), nil)
