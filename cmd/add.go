@@ -54,6 +54,6 @@ func (a *Add) Run(args []string) error {
 		return err
 	}
 
-	pi := data.NewPasswordInfo(username, hash, salt)
+	pi := data.NewPasswordInfo(string(username), hash, salt)
 	return a.store.Put(string(name), pi)
 }

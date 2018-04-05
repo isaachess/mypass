@@ -55,6 +55,16 @@ func (s *JSONStore) Get(name string) (*data.PasswordInfo, error) {
 	return p, nil
 }
 
+func (s *JSONStore) GetNames() ([]string, error) {
+	s.pwds_mu.Lock()
+	defer s.pwds_mu.Unlock()
+	var names []string
+	for name, _ := range s.pwds {
+		names = append(names, name)
+	}
+	return names, nil
+}
+
 func (s *JSONStore) Put(name string, val *data.PasswordInfo) error {
 	// Put adds the pwd info to the map and writes json to the file
 	s.writePwds(name, val)

@@ -39,7 +39,12 @@ func run() error {
 
 	store := store.NewJSONStore(config.DataFileLocation)
 	addCmd := cmd.NewCommand(cmd.AddName, cmd.AddFlags, cmd.NewAdd(store), nil)
-	mainCmd := cmd.NewCommand(cmd.MainName, cmd.MainFlags, cmd.NewMain(), []*cmd.Command{addCmd})
+	listCmd := cmd.NewCommand(cmd.ListName, cmd.ListFlags, cmd.NewList(store), nil)
+	mainSubs := []*cmd.Command{
+		addCmd,
+		listCmd,
+	}
+	mainCmd := cmd.NewCommand(cmd.MainName, cmd.MainFlags, cmd.NewMain(), mainSubs)
 
 	if err := store.Connect(); err != nil {
 		return err
@@ -49,40 +54,4 @@ func run() error {
 	mainCmd.Execute(os.Args[1:])
 
 	return nil
-
-	//master := []byte("sample master passwd")
-	//pw, err := generate.Generate(8, generate.AllChars)
-	//if err != nil {
-	//return err
-	//}
-
-	//salt, err := encrypt.NewSalt(12)
-	//if err != nil {
-	//return err
-	//}
-
-	//key := encrypt.MasterToKey(master, salt)
-
-	//hash, err := encrypt.Encrypt(pw, salt, key)
-	//if err != nil {
-	//return err
-	//}
-
-	//b := data.NewEncodableBytes(hash, base64.StdEncoding)
-
-	//fmt.Printf("encrypted %s to %s\n", string(pw), b)
-
-	//str := b.String()
-	//decoded, err := base64.StdEncoding.DecodeString(str)
-	//if err != nil {
-	//return err
-	//}
-
-	//dec, err := encrypt.Decrypt(decoded, salt, key)
-	//if err != nil {
-	//return err
-	//}
-
-	//fmt.Printf("decrypted %s\n", string(dec))
-	//return nil
 }
