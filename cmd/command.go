@@ -5,23 +5,24 @@ import (
 	"fmt"
 )
 
-type Executor interface {
+type Runner interface {
 	Run(args []string) error
 }
 
 type Command struct {
-	exec  Executor
-	flags *flag.FlagSet
-	name  string
-	subs  []*Command
+	runner Runner
+	flags  *flag.FlagSet
+	name   string
+	subs   []*Command
 }
 
-func NewCommand(name string, flags *flag.FlagSet, exec Executor, subs []*Command) *Command {
+func NewCommand(name string, flags *flag.FlagSet, runner Runner,
+	subs []*Command) *Command {
 	return &Command{
-		exec:  exec,
-		flags: flags,
-		name:  name,
-		subs:  subs,
+		runner: runner,
+		flags:  flags,
+		name:   name,
+		subs:   subs,
 	}
 }
 
@@ -36,7 +37,7 @@ func (c *Command) Execute(args []string) error {
 		}
 	}
 	c.flags.Parse(args)
-	if err := c.exec.Run(args); err != nil {
+	if err := c.runner.Run(args); err != nil {
 		fmt.Println(c.usage())
 		return err
 	}

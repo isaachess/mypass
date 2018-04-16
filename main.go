@@ -13,7 +13,8 @@ import (
 
 var (
 	programName = "mypass"
-	configPath  = flag.String("config-path", "", "The path to the config json file")
+	configPath  = flag.String("config-path", "",
+		"The path to the config json file")
 )
 
 func main() {
@@ -28,7 +29,8 @@ func run() error {
 		return err
 	}
 
-	defaultPath := filepath.Join(currentUser.HomeDir, fmt.Sprintf(".%s", programName))
+	defaultPath := filepath.Join(currentUser.HomeDir, fmt.Sprintf(".%s",
+		programName))
 
 	path := *configPath
 
@@ -39,13 +41,16 @@ func run() error {
 	config := cfg.LoadConfig(path, defaultPath)
 
 	store := store.NewJSONStore(config.DataFileLocation)
-	addCmd := cmd.NewCommand(cmd.AddName, cmd.AddFlags, cmd.NewAdd(store), nil)
-	listCmd := cmd.NewCommand(cmd.ListName, cmd.ListFlags, cmd.NewList(store), nil)
+	addCmd := cmd.NewCommand(cmd.AddName, cmd.AddFlags, cmd.NewAdd(store),
+		nil)
+	listCmd := cmd.NewCommand(cmd.ListName, cmd.ListFlags, cmd.NewList(store),
+		nil)
 	mainSubs := []*cmd.Command{
 		addCmd,
 		listCmd,
 	}
-	mainCmd := cmd.NewCommand(cmd.MainName, cmd.MainFlags, cmd.NewMain(), mainSubs)
+	mainCmd := cmd.NewCommand(cmd.MainName, cmd.MainFlags, cmd.NewMain(),
+		mainSubs)
 
 	if err := store.Connect(); err != nil {
 		return err

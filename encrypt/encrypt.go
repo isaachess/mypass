@@ -15,7 +15,9 @@ var keySize = 32
 
 // Encrypt takes the plain-text password and the encryption key, and
 // returns the encrypted password and the salt used to encrypt it
-func Encrypt(pw data.Secret, salt []byte, key data.Secret) (encPw []byte, err error) {
+func Encrypt(pw data.Secret, salt []byte, key data.Secret) (encPw []byte,
+	err error) {
+
 	c, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
