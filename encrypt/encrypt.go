@@ -31,7 +31,7 @@ func Encrypt(pw data.Secret, salt []byte, key data.Secret) (encPw []byte,
 	return gcm.Seal(nil, salt, pw, nil), nil
 }
 
-func Decrypt(encPw, salt []byte, key data.Secret) (pw []byte, err error) {
+func Decrypt(encPw, salt []byte, key data.Secret) (pw data.Secret, err error) {
 	c, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func Decrypt(encPw, salt []byte, key data.Secret) (pw []byte, err error) {
 	return gcm.Open(nil, salt, encPw, nil)
 }
 
-func MasterToKey(master data.Secret, salt []byte) []byte {
+func MasterToKey(master data.Secret, salt []byte) data.Secret {
 	return pbkdf2.Key(append(master, salt...), salt, 4096, keySize, sha512.New)
 }
 

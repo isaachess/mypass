@@ -11,3 +11,7 @@ func NewSecret(b []byte) Secret {
 func (s Secret) String() string {
 	return "< unprintable >"
 }
+
+func (s Secret) DangerousString() string {
+	return string(s)
+}

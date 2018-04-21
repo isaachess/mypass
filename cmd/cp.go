@@ -4,8 +4,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"mypass/encrypt"
 	"mypass/store"
 	"mypass/terminal"
+
+	"github.com/atotto/clipboard"
 )
 
 const CpName = "cp"
@@ -25,19 +28,24 @@ func (c *Cp) Run(args []string) error {
 		return errors.New("Please provide which password to cp")
 	}
 
-	site_name := args[0]
+	return c.cpSiteName(args[0])
+}
 
-	pw, err := c.store.Get(site_name)
+func (c *Cp) cpSiteName(name string) error {
+	pw, err := c.store.Get(name)
 	if err != nil && err != store.ErrorNotFound {
 		return err
 	}
 
-	// TODO(isaac): If partials come back with *one* match, we should just cp
-	// that to the keyboard and print a message of which site we printed
-
 	// TODO(isaac): way to alias a site for fast copying
+
+	// check partial matches; if single partial match found, use it
 	if err == store.ErrorNotFound {
-		return c.findAndPrintPartials(site_name)
+		matches := c.store.MatchNames(name)
+		if len(matches) != 1 {
+			return c.findAndPrintPartials(name, matches)
+		}
+		return c.cpSiteName(matches[0])
 	}
 
 	mp, err := terminal.ReadMasterPassword()
@@ -45,23 +53,18 @@ func (c *Cp) Run(args []string) error {
 		return err
 	}
 
-	fmt.Println("pw", pw, "mp", mp)
+	key := encrypt.MasterToKey(mp, pw.Salt)
 
-	return nil
+	decrypted, err := encrypt.Decrypt(pw.Hash, pw.Salt, key)
+	if err != nil {
+		fmt.Println("error decrypting", err)
+		return err
+	}
 
-	//key := encrypt.MasterToKey(mp, salt)
-
-	//hash, err := encrypt.Encrypt(pw, salt, key)
-	//if err != nil {
-	//return err
-	//}
-
-	//pi := data.NewPasswordInfo(string(username), hash, salt)
-	//return a.store.Put(string(name), pi)
+	return clipboard.WriteAll(decrypted.DangerousString())
 }
 
-func (c *Cp) findAndPrintPartials(name string) error {
-	matches := c.store.MatchNames(name)
+func (c *Cp) findAndPrintPartials(name string, matches []string) error {
 	if len(matches) == 0 {
 		fmt.Println("No matches found for name: ", name)
 		return nil
