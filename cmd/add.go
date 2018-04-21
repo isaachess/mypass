@@ -14,10 +14,10 @@ const AddName = "add"
 var AddFlags = flag.NewFlagSet(AddName, flag.ExitOnError)
 
 type Add struct {
-	store *store.JSONStore
+	store store.Store
 }
 
-func NewAdd(store *store.JSONStore) *Add {
+func NewAdd(store store.Store) *Add {
 	return &Add{store: store}
 }
 
@@ -56,4 +56,8 @@ func (a *Add) Run(args []string) error {
 
 	pi := data.NewPasswordInfo(string(username), hash, salt)
 	return a.store.Put(string(name), pi)
+}
+
+func (a *Add) Usage() string {
+	return AddName
 }

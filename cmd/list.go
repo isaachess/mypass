@@ -52,3 +52,7 @@ func (l *List) listAll() error {
 
 	return nil
 }
+
+func (l *List) Usage() string {
+	return fmt.Sprintf("%s [site-name]", ListName)
+}

@@ -7,6 +7,7 @@ import (
 
 type Runner interface {
 	Run(args []string) error
+	Usage() string
 }
 
 type Command struct {
@@ -46,14 +47,18 @@ func (c *Command) Execute(args []string) error {
 
 func (c *Command) usage() string {
 	var usg = `
-USAGE: %s [sub-command] [args]
+USAGE: %s
 
 SUBCOMMANDS:
 %s`
-	return fmt.Sprintf(usg, c.name, c.subUsage())
+	return fmt.Sprintf(usg, c.runner.Usage(), c.subUsage())
 }
 
 func (c *Command) subUsage() string {
+	if len(c.subs) == 0 {
+		return "none"
+	}
+
 	var final string
 	for _, sub := range c.subs {
 		final += fmt.Sprintf("%s\n", sub.name)

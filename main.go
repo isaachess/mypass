@@ -43,10 +43,13 @@ func run() error {
 	store := store.NewJSONStore(config.DataFileLocation)
 	addCmd := cmd.NewCommand(cmd.AddName, cmd.AddFlags, cmd.NewAdd(store),
 		nil)
+	cpCmd := cmd.NewCommand(cmd.CpName, cmd.CpFlags, cmd.NewCp(store),
+		nil)
 	listCmd := cmd.NewCommand(cmd.ListName, cmd.ListFlags, cmd.NewList(store),
 		nil)
 	mainSubs := []*cmd.Command{
 		addCmd,
+		cpCmd,
 		listCmd,
 	}
 	mainCmd := cmd.NewCommand(cmd.MainName, cmd.MainFlags, cmd.NewMain(),
