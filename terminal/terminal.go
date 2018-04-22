@@ -21,6 +21,10 @@ func ReadMasterPassword() (data.Secret, error) {
 	return readPassword("Master password: ")
 }
 
+func ConfirmMasterPassword() (data.Secret, error) {
+	return readPassword("Confirm password: ")
+}
+
 func ReadPassword() (data.Secret, error) {
 	return readPassword("Password: ")
 }

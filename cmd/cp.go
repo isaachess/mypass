@@ -57,7 +57,6 @@ func (c *Cp) cpSiteName(name string) error {
 
 	decrypted, err := encrypt.Decrypt(pw.Hash, pw.Salt, key)
 	if err != nil {
-		fmt.Println("error decrypting", err)
 		return err
 	}
 
