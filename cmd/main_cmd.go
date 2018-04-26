@@ -15,7 +15,7 @@ type Main struct{}
 func NewMain() *Main { return &Main{} }
 
 func (m *Main) Run(args []string) error {
-	return errors.New("Main should never be called on its own")
+	return errors.New("Missing sub-command")
 }
 
 func (m *Main) Usage() string {

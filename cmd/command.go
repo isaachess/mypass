@@ -32,29 +32,50 @@ func (c *Command) Execute(args []string) error {
 	// If no sub found, execute this one
 	if len(args) > 0 {
 		subName := args[0]
-		subCo := c.findSub(subName)
-		if subCo != nil {
-			return subCo.Execute(args[1:])
+		subCom := c.findSub(subName)
+		if subCom != nil {
+			return subCom.Execute(args[1:])
 		}
 	}
+
+	// if no matching sub found but this command has subs, print usage
+	if len(c.subs) > 0 {
+		fmt.Println(c.subUsage())
+		return nil
+	}
+
 	c.flags.Parse(args)
 	if err := c.runner.Run(args); err != nil {
-		fmt.Println(c.usage())
+		fmt.Println(c.errorText(err))
 		return err
 	}
 	return nil
 }
 
-func (c *Command) usage() string {
+func (c *Command) subUsage() string {
 	var usg = `
-USAGE: %s
+Usage: %s [sub-command]
 
-SUBCOMMANDS:
+Subcommands:
+
 %s`
-	return fmt.Sprintf(usg, c.runner.Usage(), c.subUsage())
+	return fmt.Sprintf(usg, c.name, c.subCommands())
 }
 
-func (c *Command) subUsage() string {
+func (c *Command) errorText(err error) string {
+	var msg = `
+The following error occured: %s
+
+%s`
+	return fmt.Sprintf(msg, err.Error(), c.usage())
+}
+
+func (c *Command) usage() string {
+	var usg = "Usage: %s"
+	return fmt.Sprintf(usg, c.runner.Usage())
+}
+
+func (c *Command) subCommands() string {
 	if len(c.subs) == 0 {
 		return "none"
 	}

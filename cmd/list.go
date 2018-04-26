@@ -54,5 +54,9 @@ func (l *List) listAll() error {
 }
 
 func (l *List) Usage() string {
-	return fmt.Sprintf("%s [site-name]", ListName)
+	var usg = `%s [site-name]
+
+If no site-name is included, all sites are listed. If site-name is included,
+site details are listed.`
+	return fmt.Sprintf(usg, ListName)
 }

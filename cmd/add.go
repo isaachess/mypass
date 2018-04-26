@@ -3,7 +3,6 @@ package cmd
 import (
 	"errors"
 	"flag"
-	"fmt"
 	"mypass/data"
 	"mypass/encrypt"
 	"mypass/generate"
@@ -26,7 +25,7 @@ func NewAdd(store store.Store) *Add {
 
 func (a *Add) Run(args []string) error {
 	if len(args) > 0 {
-		return errors.New("No args expected")
+		return errors.New("No args expected for command")
 	}
 
 	mp, err := terminal.ReadMasterPassword()
@@ -47,8 +46,7 @@ func (a *Add) Run(args []string) error {
 		}
 
 		if !reflect.DeepEqual(mp, mp2) {
-			fmt.Println("Master passwords do not match")
-			return nil
+			return errors.New("Master passwords do not match")
 		}
 	} else {
 		// this is not the first pw, make sure master password is the same used
@@ -58,8 +56,8 @@ func (a *Add) Run(args []string) error {
 			return err
 		}
 		if !ok {
-			fmt.Println("Master password does not match previous passwords")
-			return nil
+			return errors.New(
+				"Master password does not match previous passwords")
 		}
 	}
 
@@ -91,6 +89,7 @@ func (a *Add) Run(args []string) error {
 	}
 
 	pi := data.NewPasswordInfo(string(username), hash, salt)
+
 	return a.store.Put(string(name), pi)
 }
 

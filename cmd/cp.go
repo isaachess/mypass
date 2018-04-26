@@ -65,8 +65,7 @@ func (c *Cp) cpSiteName(name string) error {
 
 func (c *Cp) findAndPrintPartials(name string, matches []string) error {
 	if len(matches) == 0 {
-		fmt.Println("No matches found for name: ", name)
-		return nil
+		return fmt.Errorf("No matches found for name: %s", name)
 	}
 
 	var matchesFormat string
